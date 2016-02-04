@@ -69,7 +69,7 @@ aye() {
 
   if [ $1 = 'mongo' ]; then
     if [ -n "$(docker ps -a | grep one_mongo_1 | awk '{print $1}')" ]; then
-      docker exec -it one_mongo_1 mongo
+      docker exec -it one_mongo_1 mongo shippable
     else
       echo 'Mongoland is a lie.'
     fi
