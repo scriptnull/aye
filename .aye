@@ -1,0 +1,127 @@
+aye() {
+  if [ $# = 0 ]; then
+    AYE="
+    ........................................
+    ..............:=.~......................
+    ..............~~~=,.....................
+    ...............,=....+..................
+    ........................................
+    ........................................
+    ........................................
+    .........,::,...,.:,.....,:::,..........
+    ......:::::::,::,:::::.:::.::::::.=:....
+    ......~:::::,.I=II,:=IIII.,::::~=,=~:...
+    .......::::=+.~I.?~,I.~?.+~,::::===+....
+    ...===,.,:.+.7,~ .II?7.? .I:::...,,~....
+    ..~+=,:....7I~ 7 :III?   :+.............
+    ..:,++......7II?II:.III?I?..............
+    ..............IIIII?II+I+...............
+    ..=+............?IIIII,......::.........
+    ..............~::::::::::::::...........
+    .......:::::::,.:.III:,.................
+    ................:IIII.:..~:::::,........
+    ...............~:IIII::.::::::::::......
+    ...............:.IIII..,.........,:.....
+    ..............:::.,,::::,...............
+    ........................................
+    ........................................
+    ...........  aye help you ..............
+    "
+
+    echo $AYE
+
+    return
+  fi
+
+  if [ $1 = 'help' ]; then
+    echo '\n    Usage: aye [options] [command]\n'
+    echo '    COMMANDS'
+    echo '      ps  \t\tCleaner list of containers'
+    echo '      images  \t\tList of images'
+    echo '      clean \t\tRemove untagged images'
+    echo '      reset  \t\tStop and remove all containers'
+    echo '      logs [micro]  \tEasier logs'
+    echo '      mongo \t\tTake me to Mongoland'
+    echo '      oneup \t\tOneup!'
+    echo '      one \t\tOne Micro'
+    echo ''
+
+    return
+  fi
+
+  if [ $1 = 'ps' ]; then
+    docker ps "${@:2}" --format "table {{.ID}}\t{{.Status}}\t{{.Image}}\t{{.Names}}"
+
+    return
+  fi
+
+  if [ $1 = 'reset' ]; then
+    if [ -n "$(docker ps -a -q)" ]; then
+      echo 'Stopping running containers: '
+      docker stop -t=0 $(docker ps -a -q)
+      echo 'Removing containers: '
+      docker rm -f $(docker ps -a -q)
+    fi
+
+    return
+  fi
+
+  if [ $1 = 'mongo' ]; then
+    if [ -n "$(docker ps -a | grep one_mongo_1 | awk '{print $1}')" ]; then
+      docker exec -it one_mongo_1 mongo
+    else
+      echo 'Mongoland is a lie.'
+    fi
+
+    return
+  fi
+
+  if [ $1 = 'clean' ]; then
+    if [ -n "$(docker images | grep "^<none>" | awk "{print $3}")" ]; then
+      docker rmi $(docker images | grep "^<none>" | awk "{print $3}")
+    fi
+
+    return
+  fi
+
+  if [ $1 = 'images' ]; then
+    docker images "${@:2}"
+
+    return
+  fi
+
+  if [ $1 = 'oneup' ]; then
+    cd ~/shippable/one/
+    ./oneup --all
+
+    return
+  fi
+
+  if [ $1 = 'logs' ]; then
+    if [ -z $2 ]; then
+      echo 'You missed the micro name!'
+
+      return
+    fi
+
+    if [ -n "$(docker ps | grep components_$2_1 | awk '{print $1}')" ]; then
+      docker logs -f --tail="10" "$(docker ps | grep components_$2_1 | awk '{print $1}')"
+
+      return
+    fi
+
+    if [ -n "$(docker ps | grep $2_onebox | awk '{print $1}')" ]; then
+      docker logs -f --tail="10" "$(docker ps | grep $2_onebox | awk '{print $1}')"
+
+      return
+    fi
+
+    if [ -n "$(docker ps | grep components_$2_1_onebox | awk '{print $1}')" ]; then
+      docker logs -f --tail="10" "$(docker ps | grep components_$2_1_onebox | awk '{print $1}')"
+
+      return
+    fi
+
+    echo 'No such running micro found!'
+  fi
+}
