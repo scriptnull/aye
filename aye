@@ -43,7 +43,8 @@ aye() {
     printf '      logs [micro]  \tEasier logs\n'
     printf '      mongo \t\tTake me to Mongoland\n'
     printf '      oneup \t\tOneup!\n'
-    printf '      one [micro] \t\tConvert to one micro\n'
+    printf '      one [micro] \tConvert to one micro\n'
+    printf '      restart \t\tRestart docker\n'
     printf ''
 
     return
@@ -97,6 +98,26 @@ aye() {
     return
   fi
 
+  if [ $1 = 'one' ]; then
+    if [ -z $2 ]; then
+      echo 'You missed the micro name!'
+
+      return
+    fi
+
+    if [ $2 = 'api' ]; then
+      cd ~/shippable/api
+      ./one
+
+      return
+    else
+      cd ~/shippable/micro/
+      ./one nod $2
+
+      return
+    fi
+  fi
+
   if [ $1 = 'logs' ]; then
     if [ -z $2 ]; then
       echo 'You missed the micro name!'
@@ -104,24 +125,34 @@ aye() {
       return
     fi
 
-    if [ -n "$(docker ps | grep components_$2_1 | awk '{print $1}')" ]; then
-      docker logs -f --tail="10" "$(docker ps | grep components_$2_1 | awk '{print $1}')"
+    if [ "$#" -gt 2 ]; then
+      grep=$3
+    else
+      grep="^"
+    fi
+
+    if [ -n "$(docker ps | grep components_$2_1_onebox | awk '{print $1}')" ]; then
+      docker logs -f --tail="50" "$(docker ps | grep components_$2_1_onebox | awk '{print $1}')" 2>&1 | grep $grep
 
       return
     fi
 
     if [ -n "$(docker ps | grep $2_onebox | awk '{print $1}')" ]; then
-      docker logs -f --tail="10" "$(docker ps | grep $2_onebox | awk '{print $1}')"
+      docker logs -f --tail="50" "$(docker ps | grep $2_onebox | awk '{print $1}')" 2>&1 | grep $grep
 
       return
     fi
 
-    if [ -n "$(docker ps | grep components_$2_1_onebox | awk '{print $1}')" ]; then
-      docker logs -f --tail="10" "$(docker ps | grep components_$2_1_onebox | awk '{print $1}')"
+    if [ -n "$(docker ps | grep components_$2_1 | awk '{print $1}')" ]; then
+      docker logs -f --tail="50" "$(docker ps | grep components_$2_1 | awk '{print $1}')" 2>&1 | grep $grep
 
       return
     fi
 
     echo 'No such running micro found!'
+  fi
+
+  if [ $1 = 'restart' ]; then
+    sudo service docker restart
   fi
 }
