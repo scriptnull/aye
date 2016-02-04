@@ -6,7 +6,7 @@ Docker workflow simplified.
 
 ```
 git clone git@github.com:shrivara/aye.git
-ln -s ./aye/.aye ~/.aye
+ln -s $(pwd)/aye/aye ~/.aye
 echo source ~/.aye > ~/.bashrc
 source ~/.bashrc
 ```

@@ -28,23 +28,23 @@ aye() {
     ...........  aye help you ..............
     "
 
-    echo $AYE
+    printf $AYE
 
     return
   fi
 
   if [ $1 = 'help' ]; then
-    echo '\n    Usage: aye [options] [command]\n'
-    echo '    COMMANDS'
-    echo '      ps  \t\tCleaner list of containers'
-    echo '      images  \t\tList of images'
-    echo '      clean \t\tRemove untagged images'
-    echo '      reset  \t\tStop and remove all containers'
-    echo '      logs [micro]  \tEasier logs'
-    echo '      mongo \t\tTake me to Mongoland'
-    echo '      oneup \t\tOneup!'
-    echo '      one \t\tOne Micro'
-    echo ''
+    printf '\n    Usage: aye [options] [command]\n\n'
+    printf '    COMMANDS\n\n'
+    printf '      ps  \t\tCleaner list of containers\n'
+    printf '      images  \t\tList of images\n'
+    printf '      clean \t\tRemove untagged images\n'
+    printf '      reset  \t\tStop and remove all containers\n'
+    printf '      logs [micro]  \tEasier logs\n'
+    printf '      mongo \t\tTake me to Mongoland\n'
+    printf '      oneup \t\tOneup!\n'
+    printf '      one [micro] \t\tConvert to one micro\n'
+    printf ''
 
     return
   fi
